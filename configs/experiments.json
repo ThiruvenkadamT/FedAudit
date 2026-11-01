@@ -1,0 +1,269 @@
+{
+  "image_size": 128,
+  "rounds": 30,
+  "local_epochs": 1,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "batch_size": 32,
+  "optimizer": {
+    "name": "sgd",
+    "lr": 0.01,
+    "momentum": 0.9,
+    "momentum_scaffold_fednova": 0.0,
+    "weight_decay": 0.0001
+  },
+  "augmentation": {
+    "horizontal_flip": 0.5
+  },
+  "model": {
+    "name": "compact_cnn",
+    "channels": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "dropout": 0.3,
+    "parameters": 1170000
+  },
+  "algorithms": {
+    "fedavg": {},
+    "fedprox": {
+      "mu": 0.01
+    },
+    "scaffold": {},
+    "fednova": {},
+    "feddyn": {
+      "alpha": 0.01
+    },
+    "fedadam": {
+      "server_lr": 0.01,
+      "beta1": 0.9,
+      "beta2": 0.99,
+      "tau": 0.001
+    },
+    "moon": {
+      "mu": 1.0,
+      "temperature": 0.5
+    },
+    "fedbn": {},
+    "local": {},
+    "central": {}
+  },
+  "stage_a": {
+    "encoders": [
+      "pixel",
+      "resnet50",
+      "dino_vits16"
+    ],
+    "pixel_encoder_size": 32,
+    "band_grid": [
+      [
+        8,
+        16
+      ],
+      [
+        16,
+        12
+      ],
+      [
+        16,
+        16
+      ],
+      [
+        16,
+        20
+      ],
+      [
+        24,
+        12
+      ],
+      [
+        32,
+        12
+      ]
+    ],
+    "tau_grid": [
+      0.8,
+      0.85,
+      0.88,
+      0.9,
+      0.92,
+      0.94,
+      0.96,
+      0.98
+    ],
+    "selection": "highest cross-site recall with precision >= 0.95; within 0.01 recall, fewest candidates; otherwise highest F1",
+    "selected": {
+      "brain": {
+        "encoder": "pixel",
+        "n_bands": 8,
+        "band_width": 16,
+        "tau": 0.92
+      },
+      "ham10000": {
+        "encoder": "pixel",
+        "n_bands": 16,
+        "band_width": 16,
+        "tau": 0.96
+      }
+    },
+    "token_bits": 128,
+    "ckks": {
+      "poly_modulus_degree": 8192,
+      "scale_bits": 40,
+      "random_factor": [
+        1,
+        64
+      ]
+    },
+    "he_sample_per_site_pair": 3000,
+    "reference": "identical pixels, or NCC >= 0.98 on 64x64 grayscale, or dHash distance <= 2 and NCC >= 0.90"
+  },
+  "stage_b": {
+    "class_standardized_min_clean_per_class": 50
+  },
+  "stage_c": {
+    "images_per_site": 128,
+    "smoothgrad_samples": 8,
+    "epsilons": [
+      0.5,
+      1,
+      2,
+      4,
+      null
+    ],
+    "delta": 1e-05,
+    "noise_draws": 20,
+    "margin_attribution": 0.05,
+    "margin_sensitivity": 0.05,
+    "alpha": 0.05,
+    "l2_sensitivity": "sqrt(7), add/remove adjacency"
+  },
+  "stage_d": {
+    "p": 0.5,
+    "lambda": 1.0,
+    "feature_mask_fraction": 0.1,
+    "feature_mask_refit_rounds": 5
+  },
+  "experiments": {
+    "E2_grid": [
+      [
+        2,
+        1000
+      ],
+      [
+        2,
+        5000
+      ],
+      [
+        2,
+        20000
+      ],
+      [
+        3,
+        2000
+      ],
+      [
+        4,
+        2000
+      ],
+      [
+        5,
+        2000
+      ],
+      [
+        8,
+        2000
+      ],
+      [
+        10,
+        2000
+      ]
+    ],
+    "E2_synthetic": {
+      "dim": 2048,
+      "duplicate_rate": 0.02,
+      "n_bands": 16,
+      "band_width": 16,
+      "tau": 0.9
+    },
+    "E3_images_per_transformation": 300,
+    "ct_mri_partitions": [
+      "iid",
+      "dirichlet_1.0",
+      "dirichlet_0.5",
+      "dirichlet_0.1",
+      "modality_skew"
+    ],
+    "planted_marker": {
+      "sites": [
+        0,
+        1
+      ],
+      "corner": "top-right",
+      "class_probability": 0.9
+    },
+    "E4_natural_algorithms": [
+      "fedavg",
+      "fedprox",
+      "scaffold",
+      "fednova",
+      "feddyn",
+      "fedadam",
+      "moon",
+      "fedbn",
+      "local",
+      "central"
+    ],
+    "E4_controlled": {
+      "algorithms": [
+        "fedavg",
+        "scaffold",
+        "fedbn",
+        "local"
+      ],
+      "partitions": [
+        "natural",
+        "iid",
+        "dirichlet_0.5"
+      ],
+      "rates": [
+        0.0,
+        0.01,
+        0.02,
+        0.05,
+        0.1
+      ],
+      "copies": "half exact, half altered (resize, JPEG, crop, overlay)"
+    },
+    "E5_E6": {
+      "algorithms": [
+        "fedavg",
+        "scaffold",
+        "fedbn"
+      ],
+      "variants": [
+        "none",
+        "headcrop",
+        "blanktrain",
+        "featmask",
+        "robust"
+      ]
+    },
+    "E4_backbone_check": {
+      "model": "resnet18",
+      "pretrained": "ImageNet (IMAGENET1K_V1)",
+      "first_layer": "filters averaged over color channels",
+      "algorithms": "all ten",
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  }
+}

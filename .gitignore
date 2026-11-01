@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+
+# experiment outputs and data
+fedaudit_results/
+fedaudit_results*.zip
+paper/numbers.json
+paper/figures/*.png
+paper/figures/*.tif
+*.npz
+*.pkl
