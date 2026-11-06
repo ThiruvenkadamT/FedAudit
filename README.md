@@ -2,7 +2,7 @@
 
 code and results for the paper
 
-> T. Thiruvenkadam, N. Sivakumar, J. Emerson Raja , "FedAudit: Privacy-Preserving Auditing of Cross-Site Data Leakage and Shortcut Reliance in Federated Medical Imaging" submitted to \\\*IEEE Access\\\*.
+> T. Thiruvenkadam, N. Sivakumar, J. Emerson Raja , "FedAudit: Privacy-Preserving Auditing of Cross-Site Data Leakage and Shortcut Reliance in Federated Medical Imaging".
 
 FedAudit is a four-stage audit that hospitals run before they report federated results. No plaintext
 image, hash, embedding or explanation map leaves a hospital.
